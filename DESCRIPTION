@@ -1,0 +1,9 @@
+Package: randomForestCI
+Title: Confidence Intervals for Random Forests
+Version: 1.0.0
+Authors@R: person("Stefan", "Wager", , "swager@stanford.edu", role = c("aut", "cre"))
+Description: Computes stadard error estimates for predictions made by a random forest.
+Depends: R (>= 3.1.2)
+License: What license is it under?
+LazyData: true
+Imports: randomForest
