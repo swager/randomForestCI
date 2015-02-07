@@ -4,17 +4,31 @@
 #' @param newdata A set of test points at which to evaluate standard errors
 
 randomForestInfJackSubsample = function(rf, newdata) {
-	predictions = predict(rf, newdata, predict.all = TRUE);
-	agg_pred = predictions$aggregate;
-	pred = predictions$individual;
-	N = rf$inbag;
-	Nc = N - rowMeans(N);
 	
-	cent_pred = pred - rowMeans(pred);
-	raw.vars = colSums((Nc %*% t(cent_pred))^2) / rf$ntree/(rf$ntree - 1);
-	bias.corr = colSums(Nc^2 %*% t(cent_pred)^2) / rf$ntree/(rf$ntree - 1);
-	vars = raw.vars - bias.corr;
+	if (is.null(rf$inbag)) {
+		stop("Random forest must be trained with keep.inbag = TRUE")
+	}
 	
-	var.mc = sapply(1:nrow(pred), function(rr)var(pred[rr,])) / rf$ntree
-	data.frame(predictions=agg_pred, variance=vars, var.mc = var.mc);
+	B = rf$ntree
+	n = length(rf$y)
+	s = sum(rf$inbag) / B
+	
+	obs.seen = sum(rf$inbag) + sum(rf$oob.times)
+	if (obs.seen != B * n | s %% 1 != 0) {
+		stop("Random forest must be trained with subsampling (i.e., replace = FALSE)")
+	}
+	
+	predictions = predict(rf, newdata, predict.all = TRUE)
+	agg_pred = predictions$aggregate
+	pred = predictions$individual
+	pred.centered = pred - rowMeans(pred)
+	
+	N = Matrix(rf$inbag, sparse = TRUE)
+	
+	raw.IJ = colSums((N %*% t(pred.centered) - s/n * Matrix(1, nrow(N), 1) %*% Matrix(colSums(pred.centered), 1, nrow(pred.centered)))^2) / B^2
+	boot.var = rowSums(pred.centered^2) / B
+	bias.correction = s * (n - s) / n * boot.var / B
+	vars = raw.IJ - bias.correction;
+
+	data.frame(y.hat=agg_pred, var.hat=vars);
 }
