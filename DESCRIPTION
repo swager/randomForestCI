@@ -6,4 +6,4 @@ Description: Computes stadard error estimates for predictions made by a random f
 Depends: R (>= 3.1.2)
 License: What license is it under?
 LazyData: true
-Imports: randomForest
+Imports: randomForest, Matrix
