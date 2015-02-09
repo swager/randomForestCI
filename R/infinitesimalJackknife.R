@@ -22,10 +22,10 @@ randomForestInfJack = function(rf, newdata) {
 	pred = predictions$individual
 	pred.centered = pred - rowMeans(pred)
 	
-	N = Matrix(rf$inbag, sparse = TRUE)
+	N = Matrix::Matrix(rf$inbag, sparse = TRUE)
 	N.avg = rowMeans(N)
 	
-	C = N %*% t(pred.centered) - Matrix(N.avg, nrow(N), 1) %*% Matrix(rowSums(pred.centered), 1, nrow(pred.centered))	
+	C = N %*% t(pred.centered) - Matrix::Matrix(N.avg, nrow(N), 1) %*% Matrix::Matrix(rowSums(pred.centered), 1, nrow(pred.centered))	
 	raw.IJ = colSums(C^2) / B^2
 	
 	N.var = mean(rowMeans(N^2) - rowMeans(N)^2)
