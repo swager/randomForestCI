@@ -23,12 +23,12 @@ randomForestInfJack = function(rf, newdata) {
 	pred.centered = pred - rowMeans(pred)
 	
 	N = Matrix::Matrix(rf$inbag, sparse = TRUE)
-	N.avg = rowMeans(N)
+	N.avg = Matrix::rowMeans(N)
 	
 	C = N %*% t(pred.centered) - Matrix::Matrix(N.avg, nrow(N), 1) %*% Matrix::Matrix(rowSums(pred.centered), 1, nrow(pred.centered))	
-	raw.IJ = colSums(C^2) / B^2
+	raw.IJ = Matrix::colSums(C^2) / B^2
 	
-	N.var = mean(rowMeans(N^2) - rowMeans(N)^2)
+	N.var = mean(Matrix::rowMeans(N^2) - Matrix::rowMeans(N)^2)
 	boot.var = rowSums(pred.centered^2) / B
 	bias.correction = n * N.var * boot.var / B
 	vars = raw.IJ - bias.correction;
