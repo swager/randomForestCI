@@ -6,10 +6,12 @@ install_github("swager/randomForestCI")
 library(randomForest)
 library(randomForestCI)
 
-X = matrix(rnorm(200 * 100), 200, 100)
-Y = rnorm(200)
+n = 1000
+p = 100
+X = matrix(rnorm(n * p), n, p)
+Y = rnorm(n)
 
 rf = randomForest(X, Y, keep.inbag = TRUE)
-ij = randomForestInfJack(rf, X)
+ij = randomForestInfJack(rf, X, calibrate = TRUE)
 
 plot(ij)
