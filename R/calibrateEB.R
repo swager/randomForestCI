@@ -67,6 +67,11 @@ gbayes = function(x0, g.est, sigma) {
 #' @return calibrated variance estimates
 
 calibrateEB = function(vars, sigma2) {
+	
+	if(sigma2 <= 0 | min(vars) == max(vars)) {
+		return(pmax(vars, 0))
+	}
+	
 	sigma = sqrt(sigma2)
 	eb.prior = gfit(vars, sigma)
 	
