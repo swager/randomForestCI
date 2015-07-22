@@ -30,8 +30,8 @@ gfit = function(X, sigma, p = 2, nbin = 1000, unif.fraction = 0.1) {
 	XX = sapply(1:p, function(j) xvals^j * as.numeric(xvals >= 0))
 	neg.loglik = function(eta) {
 		g.eta.raw = exp(XX %*% eta) * as.numeric(xvals >= 0)
-		if (sum(g.eta.raw == Inf)) {
-			return (1000 * length(X))
+		if ((sum(g.eta.raw) == Inf) | (sum(g.eta.raw) <= 100 * .Machine$double.eps)) {
+			return (1000 * (length(X) + sum(eta^2)))
 		}
 		g.eta.main = g.eta.raw / sum(g.eta.raw)
 		g.eta = (1 - unif.fraction) * g.eta.main +
