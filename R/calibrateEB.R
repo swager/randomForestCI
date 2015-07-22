@@ -20,7 +20,12 @@ gfit = function(X, sigma, p = 2, nbin = 1000, unif.fraction = 0.1) {
 	
 	zero.idx = max(which(xvals <= 0))
 	noise.kernel = dnorm(xvals / sigma) * binw / sigma
-	noise.rotate = noise.kernel[c(zero.idx:length(xvals), 1:(zero.idx - 1))]
+	
+	if (zero.idx > 1) {
+		noise.rotate = noise.kernel[c(zero.idx:length(xvals), 1:(zero.idx - 1))]
+	} else {
+		noise.rotate = noise.kernel
+	}
 	
 	XX = sapply(1:p, function(j) xvals^j * as.numeric(xvals >= 0))
 	neg.loglik = function(eta) {
