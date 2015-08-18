@@ -63,7 +63,7 @@ randomForestInfJack = function(rf, newdata, calibrate = TRUE, used.trees = NULL)
 	T2 = RS * Matrix::tcrossprod(NbarTN, pred.centered)
 	
 	T3 = sum(N.avg^2) * RS^2
-	raw.IJ2 = (T1 - 2 * T2 + T3) / B^2
+	raw.IJ = as.numeric(T1 - 2 * T2 + T3) / B^2
 	
 	#
 	# Apply Monte Carlo bias correction
