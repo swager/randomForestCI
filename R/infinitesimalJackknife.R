@@ -47,8 +47,23 @@ randomForestInfJack = function(rf, newdata, calibrate = TRUE, used.trees = NULL)
 	# Compute raw infinitesimal jackknife
 	#
 	
-	C = N %*% t(pred.centered) - Matrix::Matrix(N.avg, nrow(N), 1) %*% Matrix::Matrix(rowSums(pred.centered), 1, nrow(pred.centered))
-	raw.IJ = Matrix::colSums(C^2) / B^2
+	# This is too slow for large N
+	#C = N %*% t(pred.centered) - Matrix::Matrix(N.avg, nrow(N), 1) %*% Matrix::Matrix(rowSums(pred.centered), 1, nrow(pred.centered))
+	#raw.IJ = Matrix::colSums(C^2) / B^2
+	
+	# Faster implementation. Uses the fact that colSums((A - B)^2) = T1 - 2 * T2 + T3,
+	# where T1 = diag(A'A), T2 = diag(B'A), and T3 = diag(B'B)
+	
+	NTN = Matrix::crossprod(N, N)
+	NTNPT_T = Matrix::tcrossprod(pred.centered, NTN)
+	T1 = Matrix::rowSums(pred.centered * NTNPT_T)
+	
+	RS = rowSums(pred.centered)
+	NbarTN = Matrix::crossprod(N.avg, N)
+	T2 = RS * Matrix::tcrossprod(NbarTN, pred.centered)
+	
+	T3 = sum(N.avg^2) * RS^2
+	raw.IJ2 = (T1 - 2 * T2 + T3) / B^2
 	
 	#
 	# Apply Monte Carlo bias correction
