@@ -29,6 +29,6 @@ plot(ij)
 ```
 
 #### References
-Efron, Bradley. <b>Estimation and accuracy after model selection.<b> <i>Journal of the American Statistical Association</i>, 109(507), 2014. [<a href="http://statweb.stanford.edu/~ckirby/brad/papers/2013ModelSelection.pdf">link</a>]
+Efron, Bradley. <b>Estimation and accuracy after model selection.</b> <i>Journal of the American Statistical Association</i>, 109(507), 2014. [<a href="http://statweb.stanford.edu/~ckirby/brad/papers/2013ModelSelection.pdf">link</a>]
 
 Wager, Stefan, Trevor Hastie, and Bradley Efron. <b>Confidence intervals for random forests: The jackknife and the infinitesimal jackknife.</b> <i>The Journal of Machine Learning Research</i>, 15(1), 2014. [<a href="http://jmlr.csail.mit.edu/papers/volume15/wager14a/wager14a.pdf">link</a>]
