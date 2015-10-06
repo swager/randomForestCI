@@ -49,16 +49,14 @@ randomForestInfJack = function(rf, newdata, calibrate = TRUE, used.trees = NULL)
 	
 	if (B^2 > n * nrow(newdata)) {
 		
-		# This is too slow for large n
-		#C = N %*% t(pred.centered) - Matrix::Matrix(N.avg, nrow(N), 1) %*% Matrix::Matrix(rowSums(pred.centered), 1, nrow(pred.centered))
-		C = Matrix::tcrossprod(N, pred.centered)
-		    - Matrix::Matrix(N.avg, nrow(N), 1)
-		      %*% Matrix::Matrix(rowSums(pred.centered), 1, nrow(pred.centered))
+		C = Matrix::tcrossprod(N, pred.centered) -
+		      Matrix::Matrix(N.avg, nrow(N), 1) %*%
+		        Matrix::Matrix(rowSums(pred.centered), 1, nrow(pred.centered))
 		raw.IJ = Matrix::colSums(C^2) / B^2
 	
 	} else {
 	
-		# Faster implementation. Uses the fact that
+		# Faster implementation when n is large. Uses the fact that
 		# colSums((A - B)^2) = T1 - 2 * T2 + T3,
 		# where T1 = diag(A'A), T2 = diag(B'A), and T3 = diag(B'B)
 		
