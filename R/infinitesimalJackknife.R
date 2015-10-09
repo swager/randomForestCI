@@ -25,6 +25,9 @@ randomForestInfJack = function(rf, newdata, calibrate = TRUE, used.trees = NULL)
 		used.trees = 1:rf$ntree
 	}
 	
+	# check if sampling without replacement
+	no.replacement = (max(rf$inbag) == 1)
+	
 	#
 	# Extract tree-wise predictions and variable counts from random forest
 	#
@@ -81,6 +84,16 @@ randomForestInfJack = function(rf, newdata, calibrate = TRUE, used.trees = NULL)
 	boot.var = rowSums(pred.centered^2) / B
 	bias.correction = n * N.var * boot.var / B
 	vars = raw.IJ - bias.correction
+	
+	#
+	# Finite sample correction
+	#
+	
+	if (no.replacement) {
+		
+		variance.inflation = 1 / (1 - mean(rf$inbag))^2
+		vars = variance.inflation * vars
+	}
 
 	results = data.frame(y.hat=y.hat, var.hat=vars)
 	
