@@ -1,56 +1,40 @@
 #' The infinitesimal jackknife for random forests
 #'
-#' @param rf A random forest trained with replace = TRUE and keep.inbag = TRUE
-#' @param newdata A set of test points at which to evaluate standard errors
+#' @param pred A nrow(newdata) by no. of trees matrix which contains numeric predictions from a random forest trained with trees grown on bootstrap samples of the training data
+#' @param inbag A number of obs. in the training data by no. of trees matrix giving the number of times the ith observation in the training data appeared in the bootstrap sample for the jth tree.
 #' @param calibrate whether to apply calibration to mitigate Monte Carlo noise
 #'        warning: if calibrate = FALSE, some variance estimates may be negative
 #'                 due to Monte Carlo effects if the number of trees in rf is too small
 #' @param used.trees set of trees to use for variance estimation; uses all tress if NULL
-
-randomForestInfJack = function(rf, newdata, calibrate = TRUE, used.trees = NULL) {
-	
-	#
-	# Setup
-	#
-	
-	if (is.null(rf$inbag)) {
-		stop("Random forest must be trained with keep.inbag = TRUE")
-	}
-	
-	if (length(levels(factor(colSums(rf$inbag)))) > 1) {
-		stop("The keep.inbag field must store the number of times each observation was used")
-	}
-	
+#' @export
+infJack = function(pred, inbag, calibrate, used.trees = NULL) {
 	if (is.null(used.trees)) {
-		used.trees = 1:rf$ntree
+		used.trees = 1:ncol(inbag)
 	}
+        pred = pred[, used.trees]
 	
 	# check if sampling without replacement
-	no.replacement = (max(rf$inbag) == 1)
+	no.replacement = (max(inbag) == 1)
 	
 	#
 	# Extract tree-wise predictions and variable counts from random forest
 	#
 	
 	B = length(used.trees)
-	n = length(rf$y)
-	s = sum(rf$inbag) / rf$ntree
-	
-	predictions = predict(rf, newdata, predict.all = TRUE)
-	pred = predictions$individual[, used.trees]
-	# in case of classification, convert character labels to numeric (!)
-	class(pred) = "numeric"
-	y.hat = rowMeans(pred)
+	n = nrow(inbag)
+	s = sum(inbag) / ncol(inbag)
+
+        y.hat = rowMeans(pred)
 	pred.centered = pred - rowMeans(pred)
 	
-	N = Matrix::Matrix(rf$inbag[, used.trees], sparse = TRUE)
+	N = Matrix::Matrix(inbag[, used.trees], sparse = TRUE)
 	N.avg = Matrix::rowMeans(N)
 	
 	#
 	# Compute raw infinitesimal jackknife
 	#
 	
-	if (B^2 > n * nrow(newdata)) {
+	if (B^2 > n * nrow(pred)) {
 		
 		C = Matrix::tcrossprod(N, pred.centered) -
 		      Matrix::Matrix(N.avg, nrow(N), 1) %*%
@@ -91,12 +75,12 @@ randomForestInfJack = function(rf, newdata, calibrate = TRUE, used.trees = NULL)
 	
 	if (no.replacement) {
 		
-		variance.inflation = 1 / (1 - mean(rf$inbag))^2
+		variance.inflation = 1 / (1 - mean(inbag))^2
 		vars = variance.inflation * vars
 	}
 
 	results = data.frame(y.hat=y.hat, var.hat=vars)
-	
+
 	if (nrow(results) <= 20) {
 		calibrate = FALSE
 		warning("No calibration with n <= 20")
@@ -106,13 +90,13 @@ randomForestInfJack = function(rf, newdata, calibrate = TRUE, used.trees = NULL)
 	# If appropriate, calibrate variance estimates; this step in particular
 	# ensures that all variance estimates wil be positive.
 	#
-	
+
 	if (calibrate) {
 		
 		# Compute variance estimates using half the trees
 		calibration.ratio = 2
-		n.sample = ceiling(B / calibration.ratio)
-		results.ss = randomForestInfJack(rf, newdata, calibrate = FALSE, used.trees = sample(used.trees, n.sample))
+                n.sample = ceiling(B / calibration.ratio)
+                results.ss = infJack(pred, inbag, calibrate = FALSE, used.trees = sample(used.trees, n.sample))
 		
 		# Use this second set of variance estimates to estimate scale of Monte Carlo noise
 		sigma2.ss = mean((results.ss$var.hat - results$var.hat)^2)
@@ -124,5 +108,38 @@ randomForestInfJack = function(rf, newdata, calibrate = TRUE, used.trees = NULL)
 		results$var.hat = vars.calibrated
 	}
 	
+        
+        return(results)
+}
+
+#' The infinitesimal jackknife for random forests
+#'
+#' @param rf A random forest trained with replace = TRUE and keep.inbag = TRUE
+#' @param newdata A set of test points at which to evaluate standard errors
+#' @param calibrate whether to apply calibration to mitigate Monte Carlo noise
+#'        warning: if calibrate = FALSE, some variance estimates may be negative
+#'                 due to Monte Carlo effects if the number of trees in rf is too small
+#' @param used.trees set of trees to use for variance estimation; uses all tress if NULL
+#' @export
+randomForestInfJack = function(rf, newdata, calibrate = TRUE, used.trees = NULL) {
+	
+	#
+	# Setup
+	#
+	
+	if (is.null(rf$inbag)) {
+		stop("Random forest must be trained with keep.inbag = TRUE")
+	}
+	
+	if (length(levels(factor(colSums(rf$inbag)))) > 1) {
+		stop("The keep.inbag field must store the number of times each observation was used")
+	}
+	
+	predictions = predict(rf, newdata, predict.all = TRUE)
+	pred = predictions$individual
+	# in case of classification, convert character labels to numeric (!)
+	class(pred) = "numeric"
+
+        results = infJack(pred, rf$inbag, calibrate, used.trees)
 	return (results)
 }
