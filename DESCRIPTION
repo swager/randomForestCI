@@ -11,6 +11,6 @@ LazyData: true
 Imports:
     Matrix
 Suggests:
-    randomForest,
+    randomForest (>= 4.6-12),
     testthat
 RoxygenNote: 5.0.0
