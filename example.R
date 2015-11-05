@@ -1,6 +1,5 @@
 library(devtools)
 
-install_github("swager/randomForest")
 install_github("swager/randomForestCI")
 
 library(randomForest)

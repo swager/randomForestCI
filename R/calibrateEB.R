@@ -12,7 +12,7 @@
 #' @section References:
 #' For more details about "g-estimation", see: B Efron. Two modeling strategies for
 #' empirical Bayes estimation. Stat. Sci., 29(2): 285–301, 2014.
-
+#' @export
 gfit = function(X, sigma, p = 2, nbin = 1000, unif.fraction = 0.1) {
 	
 	xvals = seq(min(min(X) - 2 * sd(X), 0), max(max(X) + 2 * sd(X), sd(X)), length.out = nbin)
@@ -56,7 +56,7 @@ gfit = function(X, sigma, p = 2, nbin = 1000, unif.fraction = 0.1) {
 #' @param sigma noise estimate
 #'
 #' @return posterior estimate E[mu | x0]
-
+#' @export
 gbayes = function(x0, g.est, sigma) {
 	Kx = dnorm((g.est$x - x0) / sigma)
 	post = Kx * g.est$g
