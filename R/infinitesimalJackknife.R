@@ -16,7 +16,7 @@ infJack = function(pred, inbag, calibrate = TRUE, used.trees = NULL) {
                 used.trees = 1:ncol(inbag)
         }
 
-        pred = pred[, used.trees]
+        pred = pred[, used.trees, drop=FALSE]
         
         # check if sampling without replacement
         no.replacement = (max(inbag) == 1)
