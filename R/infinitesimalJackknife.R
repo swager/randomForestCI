@@ -147,3 +147,42 @@ randomForestInfJack = function(rf, newdata, calibrate = TRUE) {
         results = infJack(pred, rf$inbag, calibrate, used.trees = NULL)
         return (results)
 }
+
+randomForestInfJackMulticlass = function(rf, newdata, calibrate = TRUE) {
+  
+  #
+  # Setup
+  #
+  
+  if (is.null(rf$inbag)) {
+    stop("Random forest must be trained with keep.inbag = TRUE")
+  }
+  
+  if (length(levels(factor(colSums(rf$inbag)))) > 1) {
+    stop("The keep.inbag field must store the number of times each observation was used. Please make sure the version number of randomForest is 4.6-12 or higher.")
+  }
+  
+  predictions = predict(rf, newdata, predict.all = TRUE)
+  pred = predictions$individual
+  
+  #number of classes
+  K <- length(rf$classes)
+  
+  #create empty dataframe to store results
+  results.full <- data.frame(matrix(NA, nrow = nrow(newdata), ncol = K*2))
+  
+  #estimating variance for each class predictions
+  for (k in seq(1, K)){
+    #separate prediction matrix into K matrices following 1 vs. all logic
+    pred.binary <- ifelse(pred==rf$classes[k], 1, 0) 
+    #apply infinitessimal jackknife
+    results <- infJack(pred.binary, rf$inbag, calibrate, used.trees = NULL)
+    #extend column names of the final result with classes
+    colnames(results.full)[c(k,k+K)] <- paste(colnames(results), rf$classes[k], sep = "_")
+    #store results in the final dataframe
+    results.full[,k] <- results[,1]
+    results.full[,k+K] <- results[,2]
+  }
+  
+  return (results.full)
+}
