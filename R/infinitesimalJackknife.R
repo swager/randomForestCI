@@ -148,6 +148,15 @@ randomForestInfJack = function(rf, newdata, calibrate = TRUE) {
         return (results)
 }
 
+#' The infinitesimal jackknife for random forests (multiclass target variable)
+#'
+#' @param rf A random forest trained with replace = TRUE and keep.inbag = TRUE
+#' @param newdata A set of test points at which to evaluate standard errors
+#' @param calibrate whether to apply calibration to mitigate Monte Carlo noise
+#'        warning: if calibrate = FALSE, some variance estimates may be negative
+#'                 due to Monte Carlo effects if the number of trees in rf is too small
+#' @export
+
 randomForestInfJackMulticlass = function(rf, newdata, calibrate = TRUE) {
   
   #
