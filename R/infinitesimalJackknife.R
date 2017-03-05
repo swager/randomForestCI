@@ -139,7 +139,7 @@ randomForestInfJack = function(rf, newdata, calibrate = TRUE) {
                 stop("The keep.inbag field must store the number of times each observation was used. Please make sure the version number of randomForest is 4.6-12 or higher.")
         }
         
-        predictions = predict(rf, newdata, predict.all = TRUE)
+        predictions = stats::predict(rf, newdata, predict.all = TRUE)
         pred = predictions$individual
         # in case of classification, convert character labels to numeric (!)
         class(pred) = "numeric"
@@ -171,7 +171,7 @@ randomForestInfJackMulticlass = function(rf, newdata, calibrate = TRUE) {
     stop("The keep.inbag field must store the number of times each observation was used. Please make sure the version number of randomForest is 4.6-12 or higher.")
   }
   
-  predictions = predict(rf, newdata, predict.all = TRUE)
+  predictions = stats::predict(rf, newdata, predict.all = TRUE)
   pred = predictions$individual
   
   #number of classes
