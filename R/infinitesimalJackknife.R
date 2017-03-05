@@ -86,7 +86,7 @@ infJack = function(pred, inbag, calibrate = TRUE, used.trees = NULL) {
 
         results = data.frame(y.hat=y.hat, var.hat=vars)
 
-        if (nrow(results) <= 20) {
+        if (nrow(results) <= 20 & calibrate) {
                 calibrate = FALSE
                 warning("No calibration with n <= 20")
         }
