@@ -26,7 +26,7 @@ infJack = function(pred, inbag, calibrate = TRUE, used.trees = NULL) {
         #
         
         B = length(used.trees)
-        n = nrow(inbag)
+        n = as.numeric(nrow(inbag))
         s = sum(inbag) / ncol(inbag)
 
         y.hat = rowMeans(pred)
@@ -39,7 +39,7 @@ infJack = function(pred, inbag, calibrate = TRUE, used.trees = NULL) {
         # Compute raw infinitesimal jackknife
         #
         
-        if (B^2 > n * nrow(pred)) {
+        if (B^2 > n * as.numeric(nrow(pred))) {
                 
                 C = Matrix::tcrossprod(N, pred.centered) -
                       Matrix::Matrix(N.avg, nrow(N), 1) %*%
