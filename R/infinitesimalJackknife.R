@@ -8,8 +8,8 @@
 #'        warning: if calibrate = FALSE, some variance estimates may be negative
 #'                 due to Monte Carlo effects if the number of trees in rf is too small
 #' @param used.trees set of trees to use for variance estimation; uses all tress if NULL
+#' @import stats
 #' @export
-
 infJack = function(pred, inbag, calibrate = TRUE, used.trees = NULL) {
 
         if (is.null(used.trees)) {
@@ -86,7 +86,7 @@ infJack = function(pred, inbag, calibrate = TRUE, used.trees = NULL) {
 
         results = data.frame(y.hat=y.hat, var.hat=vars)
 
-        if (nrow(results) <= 20) {
+        if (nrow(results) <= 20 & calibrate) {
                 calibrate = FALSE
                 warning("No calibration with n <= 20")
         }

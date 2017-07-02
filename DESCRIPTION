@@ -13,4 +13,4 @@ Imports:
 Suggests:
     randomForest (>= 4.6-12),
     testthat
-RoxygenNote: 5.0.0
+RoxygenNote: 6.0.1

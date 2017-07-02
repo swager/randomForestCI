@@ -18,4 +18,3 @@ warning: if calibrate = FALSE, some variance estimates may be negative
 \description{
 The infinitesimal jackknife for random forests (multiclass target variable)
 }
-
