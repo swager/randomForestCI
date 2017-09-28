@@ -1,5 +1,7 @@
 # randomForestCI
 
+&#x1F534; This package is deprecated. Please use the package <a href="https://github.com/swager/grf">GRF</a> instead, which has built-in support for confidence intervals. GRF is also available from <a href="https://cran.r-project.org/web/packages/grf/index.html">CRAN</a>. &#x1F534;
+
 Confidence intervals for random forests using the infinitesimal jackknife, as developed by Efron (2014) and Wager et al. (2014).
 
 To install this package in R, run the following commands:
