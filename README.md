@@ -1,6 +1,11 @@
 # randomForestCI
 
-&#x1F534; This package is deprecated. Please use the package <a href="https://github.com/swager/grf">GRF</a> instead, which has built-in support for confidence intervals. GRF is also available from <a href="https://cran.r-project.org/web/packages/grf/index.html">CRAN</a>. &#x1F534;
+&#x1F534; This package is deprecated. Please use one of the following packages instead: &#x1F534;
+
+- <a href="https://github.com/swager/grf">grf</a>, which has built-in support for resampling-based confidence intervals, or
+- <a href="https://github.com/imbs-hl/ranger">ranger</a>, which has an actively maintained version of the infinitesimal jackknife for random forests.
+
+&#x1F534; Both packages are available from CRAN. &#x1F534;
 
 Confidence intervals for random forests using the infinitesimal jackknife, as developed by Efron (2014) and Wager et al. (2014).
 
